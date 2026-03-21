@@ -9,13 +9,13 @@
 <body>
     <div class="card">
         <div class="search">
-            <input type="text" placeholder="Enter City Name" spellcheck="false">
-            <button><img src="assests/search.png"></button>
+            <input type="text" id="city" placeholder="Enter City Name" spellcheck="false">
+            <button onclick="getWeather()"><img src="assests/search.png"></button>
         </div>
         <div class="weather">
             <img src="assests/rain.png" class="weather-icon">
             <h1 class="temp">22°C</h1>
-            <h1 class="city">India</h1>
+            <h1 class="city">Pune</h1>
         </div>
         <div class="details">
             <div class="col">
@@ -35,19 +35,18 @@
         </div>
     </div>
     <script>
-        require('dotenv').config();
-        const apiKey = process.env.WEATHER_API_KEY;
+        async function getWeather() {
+            const city = document.getElementById("city").value;
 
-        async function getWeather(city) {
-            const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+            const res = await fetch(`http://localhost:3000/weather?city=${city}`);
+            const data = await res.json();
 
-            const response = await fetch(url);
-            const data = await response.json();
-
-            console.log(data);
+            document.querySelector(".temp").innerText = data.main.temp + "°C";
+            document.querySelector(".city").innerText = data.name;
+            document.querySelector(".humidity").innerText = data.main.humidity + "%";
+            document.querySelectorAll(".humidity")[1].innerText = data.wind.speed + " km/h";
         }
-        getWeather("Pune")
+        getWeather();
     </script>
 </body>
 </html>
-<!--https://api.openweathermap.org/data/2.5/weather?q={Russia}&appid={ec6eb621302cbb749dc20cd40bb31668}-->
