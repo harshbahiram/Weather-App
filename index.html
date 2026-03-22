@@ -28,7 +28,7 @@
             <div class="col">
                 <img src="assests/wind.png">
                 <div>
-                    <p class="humidity">515 km/h</p>
+                    <p class="wind">515 km/h</p>
                     <p>Wind Speed</p>
                 </div>
             </div>
@@ -38,15 +38,14 @@
         async function getWeather() {
             const city = document.getElementById("city").value;
 
-            const res = await fetch(`http://localhost:3000/weather?city=${city}`);
+            const res = await fetch(`/weather?city=${city}`);
             const data = await res.json();
 
             document.querySelector(".temp").innerText = data.main.temp + "°C";
             document.querySelector(".city").innerText = data.name;
             document.querySelector(".humidity").innerText = data.main.humidity + "%";
-            document.querySelectorAll(".humidity")[1].innerText = data.wind.speed + " km/h";
+            document.querySelector(".wind").innerText = data.wind.speed + " km/h";
         }
-        getWeather();
     </script>
 </body>
 </html>

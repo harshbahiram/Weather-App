@@ -1,8 +1,11 @@
 require('dotenv').config();
-const express = require('express');
 
+const express = require('express');
 const app = express();
+
 const apiKey = process.env.WEATHER_API_KEY;
+
+app.use(express.static(__dirname));
 
 // very simple route
 app.get('/weather', async (req, res) => {
