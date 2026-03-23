@@ -37,14 +37,31 @@
     <script>
         async function getWeather() {
             const city = document.getElementById("city").value;
+            const weatherIcon = document.querySelector(".weather-icon");
 
             const res = await fetch(`/weather?city=${city}`);
             const data = await res.json();
 
-            document.querySelector(".temp").innerText = data.main.temp + "°C";
+            document.querySelector(".temp").innerText = Math.round(data.main.temp) + "°C";
             document.querySelector(".city").innerText = data.name;
             document.querySelector(".humidity").innerText = data.main.humidity + "%";
             document.querySelector(".wind").innerText = data.wind.speed + " km/h";
+
+            if (data.weather[0].main == "Clouds") {
+                weatherIcon.src = "assests/clouds.png";
+            }
+            else if (data.weather[0].main == "Clear") {
+                weatherIcon.src = "assests/clear.png";
+            }
+            else if (data.weather[0].main == "Rain") {
+                weatherIcon.src = "assests/rain.png";
+            }
+            else if (data.weather[0].main == "Drizzle") {
+                weatherIcon.src = "assests/drizzle.png";
+            }
+            else if (data.weather[0].main == "Mist") {
+                weatherIcon.src = "assests/mist.png";
+            }
         }
     </script>
 </body>
