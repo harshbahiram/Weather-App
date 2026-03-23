@@ -47,14 +47,16 @@
             try {
                 const res = await fetch(`/weather?city=${city}`);
 
-                if (!res.ok) {
-                    throw new Error("City not found");
+                if(!res.ok) {
+                    alert("Server error");
+                    return;
                 }
 
                 const data = await res.json();
 
-                if (!data || !data.main || !data.weather) {
-                    throw new Error("Invalid data recieved");
+                if (data.cod !== 200) {
+                    alert("City not found");
+                    return
                 }
 
                 document.querySelector(".temp").innerText = Math.round(data.main.temp) + "°C";
@@ -64,14 +66,14 @@
 
                 const weatherMain = data.weather[0].main;
 
-                if (weatherMain == "Clouds") {weatherIcon.src = "assets/clouds.png";}
-                else if (weatherMain == "Clear") {weatherIcon.src = "assets/clear.png";}
-                else if (weatherMain == "Rain") {weatherIcon.src = "assets/rain.png";}
-                else if (weatherMain == "Drizzle") {weatherIcon.src = "assets/drizzle.png";}
-                else if (weatherMain == "Mist") {weatherIcon.src = "assets/mist.png";}
+                if (weatherMain === "Clouds") {weatherIcon.src = "assets/clouds.png";}
+                else if (weatherMain === "Clear") {weatherIcon.src = "assets/clear.png";}
+                else if (weatherMain === "Rain") {weatherIcon.src = "assets/rain.png";}
+                else if (weatherMain === "Drizzle") {weatherIcon.src = "assets/drizzle.png";}
+                else if (weatherMain === "Mist") {weatherIcon.src = "assets/mist.png";}
+                else if (weatherMain === "Snow") {weatherIcon.src = "assets/snow.png";}
             } catch (error) {
-                console.error(error);
-                alert("City not found");
+                alert("Error");
             }
         }
     </script>
