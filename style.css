@@ -43,9 +43,20 @@ body{
     width: 60px;
     height: 60px;
     cursor: pointer;
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 .search button img{
     width: 16px;
+}
+.search button:active{
+    transform: scale(0.9);
+    box-shadow: inset 0 3px 6px rgba(0,0,0,0.2)
+}
+.search button:hover{
+    background: #d4f5f0;
 }
 .weather h1{
     font-size: 80px;
@@ -73,5 +84,5 @@ body{
 }
 .humidity, .wind{
     font-size: 28px;
-    margin-top: -6;
+    margin-top: -6px;
 }
