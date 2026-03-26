@@ -6,20 +6,30 @@ const apiKey = process.env.WEATHER_API_KEY;
 
 app.use(express.static(__dirname));
 
-// very simple route
 app.get('/weather', async (req, res) => {
     const city = req.query.city?.trim();
 
     if (!city) {
-            return res.status(400).json({ message: "City is required" });
+        return res.status(400).json({ message: "City is required" });
+    }
+
+    try {
+        const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${apiKey}&units=metric`;
+
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            return res.status(response.status).json({ message: "Error from weather API" });
         }
 
-    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+        const data = await response.json();
 
-    const response = await fetch(url);
-    const data = await response.json();
+        res.json(data);
 
-    res.send(data);
+    } catch (error) {
+        console.error("Error fetching weather:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
 });
 
 app.listen(3000, () => {
