@@ -14,21 +14,21 @@
         </div>
         <div class="weather">
             <img src="assets/rain.png" class="weather-icon">
-            <h1 class="temp">22°C</h1>
-            <h1 class="city">Pune</h1>
+            <h1 class="temp">--°C</h1>
+            <h1 class="city">--</h1>
         </div>
         <div class="details">
             <div class="col">
                 <img src="assets/humidity.png">
                 <div>
-                    <p class="humidity">50%</p>
+                    <p class="humidity">--%</p>
                     <p>Humidity</p>
                 </div>
             </div>
             <div class="col">
                 <img src="assets/wind.png">
                 <div>
-                    <p class="wind">515 km/h</p>
+                    <p class="wind">-- km/h</p>
                     <p>Wind Speed</p>
                 </div>
             </div>
@@ -36,46 +36,104 @@
     </div>
     <script>
         async function getWeather() {
-            
-            const city = document.getElementById("city").value;
+            const cityInput = document.getElementById("city");
+            const city = cityInput.value.trim();
+
+            const weatherSection = document.querySelector(".weather");
             const weatherIcon = document.querySelector(".weather-icon");
+            const card = document.querySelector(".card");
+            const button = document.querySelector(".search button");
+
+            const tempEl = document.querySelector(".temp");
+            const cityEl = document.querySelector(".city");
+            const humidityEl = document.querySelector(".humidity");
+            const windEl = document.querySelector(".wind");
 
             if (!city) {
                 alert("Please enter a city name");
                 return;
             }
-            try {
-                const res = await fetch(`/weather?city=${city}`);
 
-                if(!res.ok) {
-                    alert("Server error");
-                    return;
+            button.disabled = true;
+
+            weatherSection.style.display = "block";
+            tempEl.innerText = "⏳ Loading...";
+            cityEl.innerText = "";
+            humidityEl.innerText = "--%";
+            windEl.innerText = "-- km/h";
+
+            try {
+                const res = await fetch(`/weather?city=${encodeURIComponent(city)}`);
+
+                if (!res.ok) {
+                    throw new Error("Server error");
                 }
 
                 const data = await res.json();
 
-                if (data.cod !== 200) {
-                    alert("City not found");
-                    return
+                if (data.cod != 200) {
+                    cityEl.innerText = "City not found";
+                    tempEl.innerText = "--";
+                    return;
                 }
 
-                document.querySelector(".temp").innerText = Math.round(data.main.temp) + "°C";
-                document.querySelector(".city").innerText = data.name;
-                document.querySelector(".humidity").innerText = data.main.humidity + "%";
-                document.querySelector(".wind").innerText = (data.wind.speed*3.6).toFixed(1) + " km/h";
+                const temp = data?.main?.temp;
+                const humidity = data?.main?.humidity;
+                const windRaw = data?.wind?.speed;
+                const weatherMain = data?.weather?.[0]?.main;
 
-                const weatherMain = data.weather[0].main;
+                const windSpeed = windRaw ? (windRaw * 3.6).toFixed(1) : "--";
 
-                if (weatherMain === "Clouds") {weatherIcon.src = "assets/clouds.png";}
-                else if (weatherMain === "Clear") {weatherIcon.src = "assets/clear.png";}
-                else if (weatherMain === "Rain") {weatherIcon.src = "assets/rain.png";}
-                else if (weatherMain === "Drizzle") {weatherIcon.src = "assets/drizzle.png";}
-                else if (weatherMain === "Mist") {weatherIcon.src = "assets/mist.png";}
-                else if (weatherMain === "Snow") {weatherIcon.src = "assets/snow.png";}
+                tempEl.innerText = temp ? Math.round(temp) + "°C" : "--";
+                cityEl.innerText = data.name || "Unknown";
+                humidityEl.innerText = (humidity ?? "--") + "%";
+                windEl.innerText = windSpeed + " km/h";
+
+                const icons = {
+                    Clear: "assets/clear.png",
+                    Clouds: "assets/clouds.png",
+                    Rain: "assets/rain.png",
+                    Drizzle: "assets/drizzle.png",
+                    Mist: "assets/mist.png",
+                    Snow: "assets/snow.png",
+                    Haze: "assets/mist.png",
+                    Smoke: "assets/mist.png",
+                    Dust: "assets/mist.png",
+                    Thunderstorm: "assets/rain.png"
+                };
+
+                weatherIcon.src = icons[weatherMain] || "assets/clouds.png";
+
+                const themes = {
+                    Clear: "linear-gradient(135deg, #56ccf2, #2f80ed)",
+                    Clouds: "linear-gradient(135deg, #bdc3c7, #2c3e50)",
+                    Rain: "linear-gradient(135deg, #4b6cb7, #182848)",
+                    Drizzle: "linear-gradient(135deg, #89f7fe, #66a6ff)",
+                    Mist: "linear-gradient(135deg, #757f9a, #d7dde8)",
+                    Snow: "linear-gradient(135deg, #e6dada, #274046)",
+                    Haze: "linear-gradient(135deg, #757f9a, #d7dde8)",
+                    Thunderstorm: "linear-gradient(135deg, #373B44, #4286f4)"
+                };
+
+                card.style.background = themes[weatherMain] || themes["Clear"];
+
             } catch (error) {
-                alert("Error");
+                console.error(error);
+
+                cityEl.innerText = "Error loading data";
+                tempEl.innerText = "--";
+                humidityEl.innerText = "--%";
+                windEl.innerText = "-- km/h";
+            } finally {
+                button.disabled = false;
             }
         }
-    </script>
+
+        document.getElementById("city").addEventListener("keypress", function (e) {
+            if (e.key === "Enter") {
+                getWeather();
+            }
+        });
+</script>
 </body>
 </html>
