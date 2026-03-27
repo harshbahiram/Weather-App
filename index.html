@@ -56,12 +56,6 @@
 
             button.disabled = true;
 
-            weatherSection.style.display = "block";
-            tempEl.innerText = "⏳ Loading...";
-            cityEl.innerText = "";
-            humidityEl.innerText = "--%";
-            windEl.innerText = "-- km/h";
-
             try {
                 const res = await fetch(`/weather?city=${encodeURIComponent(city)}`);
 
@@ -70,6 +64,13 @@
                 }
 
                 const data = await res.json();
+                document.querySelector(".details").style.display = "flex";
+
+                weatherSection.style.display = "block";
+                tempEl.innerText = "⏳ Loading...";
+                cityEl.innerText = "";
+                humidityEl.innerText = "--%";
+                windEl.innerText = "--km/h";
 
                 if (data.cod != 200) {
                     cityEl.innerText = "City not found";
